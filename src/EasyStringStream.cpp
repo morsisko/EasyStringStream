@@ -1,16 +1,34 @@
-#include <EasyStringStream.h>
+#include "EasyStringStream.h"
 
 EasyStringStream::EasyStringStream(char* buffer, int length) :
 	buffer(buffer),
-	length(length),
-	cursor(0)
+	length(length)
 {
-	memset(buffer, 0, length);
+	reset();
 }
 
 bool EasyStringStream::canWrite()
 {
-	return length -1 > cursor;
+	return length - 1 > cursor;
+}
+
+void EasyStringStream::setDefaultBase(uint8_t base)
+{
+	if (base >= 2)
+		this->defaultBase = base;
+}
+
+void EasyStringStream::setDefaultFloatPrecision(uint8_t precision)
+{
+	this->defaultFloatPrecision = precision;
+}
+
+void EasyStringStream::reset()
+{
+	cursor = 0;
+
+	for (int i = 0; i < length; i++)
+		buffer[i] = 0;
 }
 
 size_t EasyStringStream::print(const char v[])
@@ -42,8 +60,8 @@ size_t EasyStringStream::print(unsigned char v)
 
 size_t EasyStringStream::print(unsigned long long number, int base)
 {
-	if (!base)
-		return 0;
+	if (base == -1)
+		base = this->defaultBase;
 
 	char buf[64];
 	uint8_t i = 0;
@@ -92,12 +110,15 @@ size_t EasyStringStream::print(unsigned long long number, int base)
 
 size_t EasyStringStream::print(long long n, int base)
 {
+	if (base == -1)
+		base = this->defaultBase;
+
 	if (base == 0)
 		return 0;
 
 	if (base == 10)
 	{
-		if (n < 0) 
+		if (n < 0)
 		{
 			int t = print('-');
 			n = -n;
@@ -105,12 +126,15 @@ size_t EasyStringStream::print(long long n, int base)
 		}
 		return print((unsigned long long)(n), 10);
 	}
-	else 
+	else
 		return print((unsigned long long)(n), base);
 }
 
 size_t EasyStringStream::print(unsigned long n, int base)
 {
+	if (base == -1)
+		base = this->defaultBase;
+
 	char buf[8 * sizeof(long) + 1];
 	char* str = &buf[sizeof(buf) - 1];
 
@@ -139,6 +163,9 @@ size_t EasyStringStream::print(int n, int base)
 }
 size_t EasyStringStream::print(long n, int base)
 {
+	if (base == -1)
+		base = this->defaultBase;
+
 	if (base == 0)
 		return 0;
 
@@ -167,6 +194,9 @@ size_t EasyStringStream::print(void* n)
 
 size_t EasyStringStream::print(double number, int digits)
 {
+	if (digits == -1)
+		digits = this->defaultFloatPrecision;
+
 	size_t n = 0;
 
 	if (isnan(number)) return print("nan");
@@ -208,4 +238,77 @@ size_t EasyStringStream::print(double number, int digits)
 size_t EasyStringStream::print(float number, int digits)
 {
 	return print((double)number, digits);
+}
+
+
+EasyStringStream& EasyStringStream::operator<<(const char v[])
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(char v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(unsigned char v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(int v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(unsigned int v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(long v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(unsigned long v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(long long v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(unsigned long long v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(void* v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(float v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(double v)
+{
+	this->print(v);
+	return *this;
 }
