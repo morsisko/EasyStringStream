@@ -1,5 +1,9 @@
-#include <cstdint>
-#include <cmath>
+#include <stdint.h>
+#include <math.h>
+
+#ifdef ARDUINO
+#include <Arduino.h>
+#endif
 
 class EasyStringStream
 {
@@ -16,6 +20,7 @@ public:
 	void setDefaultBase(uint8_t base);
 	void setDefaultFloatPrecision(uint8_t precision);
 	void reset();
+	const char* get();
 	size_t print(const char[]);
 	size_t print(char);
 	size_t print(unsigned char);
@@ -28,6 +33,10 @@ public:
 	size_t print(void*);
 	size_t print(double, int = -1);
 	size_t print(float, int = -1);
+#ifdef ARDUINO
+	size_t print(const String&);
+	size_t print(const __FlashStringHelper*);
+#endif
 
 	EasyStringStream& operator<<(const char v[]);
 	EasyStringStream& operator<<(char v);
@@ -41,5 +50,9 @@ public:
 	EasyStringStream& operator<<(void* v);
 	EasyStringStream& operator<<(float v);
 	EasyStringStream& operator<<(double v);
+#ifdef ARDUINO
+	EasyStringStream& operator<<(const String& v);
+	EasyStringStream& operator<<(const __FlashStringHelper* v);
+#endif
 };
 

@@ -1,4 +1,5 @@
 #include "EasyStringStream.h"
+//Based on https://github.com/arduino/ArduinoCore-API/blob/master/api/Print.cpp
 
 EasyStringStream::EasyStringStream(char* buffer, int length) :
 	buffer(buffer),
@@ -29,6 +30,11 @@ void EasyStringStream::reset()
 
 	for (int i = 0; i < length; i++)
 		buffer[i] = 0;
+}
+
+const char* EasyStringStream::get()
+{
+	return buffer;
 }
 
 size_t EasyStringStream::print(const char v[])
@@ -241,6 +247,30 @@ size_t EasyStringStream::print(float number, int digits)
 }
 
 
+#ifdef ARDUINO
+size_t EasyStringStream::print(const String& v)
+{
+	return print(v.c_str());
+}
+
+size_t EasyStringStream::print(const __FlashStringHelper* v)
+{
+#if defined(__AVR__)
+	PGM_P p = reinterpret_cast<PGM_P>(v);
+	size_t n = 0;
+	while (1) {
+		unsigned char c = pgm_read_byte(p++);
+		if (c == 0) break;
+		if (print(c)) n++;
+		else break;
+	}
+	return n;
+#else
+	return print(reinterpret_cast<const char*>(v));
+#endif
+}
+#endif
+
 EasyStringStream& EasyStringStream::operator<<(const char v[])
 {
 	this->print(v);
@@ -312,3 +342,19 @@ EasyStringStream& EasyStringStream::operator<<(double v)
 	this->print(v);
 	return *this;
 }
+
+#ifdef ARDUINO
+
+EasyStringStream& EasyStringStream::operator<<(const String& v)
+{
+	this->print(v);
+	return *this;
+}
+
+EasyStringStream& EasyStringStream::operator<<(const __FlashStringHelper* v)
+{
+	this->print(v);
+	return *this;
+}
+
+#endif
