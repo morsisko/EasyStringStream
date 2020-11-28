@@ -21,6 +21,8 @@ public:
 	void setDefaultFloatPrecision(uint8_t precision);
 	void reset();
 	const char* get();
+	int getCursor();
+	int getLength();
 	size_t print(const char[]);
 	size_t print(char);
 	size_t print(unsigned char);

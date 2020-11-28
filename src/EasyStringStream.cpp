@@ -37,6 +37,16 @@ const char* EasyStringStream::get()
 	return buffer;
 }
 
+int EasyStringStream::getCursor()
+{
+	return cursor;
+}
+
+int EasyStringStream::getLength()
+{
+	return length;
+}
+
 size_t EasyStringStream::print(const char v[])
 {
 	size_t i = 0;
