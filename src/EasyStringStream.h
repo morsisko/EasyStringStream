@@ -1,3 +1,6 @@
+#ifndef EASY_STRING_STREAM_GUARD_H
+#define EASY_STRING_STREAM_GUARD_H
+
 #include <stdint.h>
 #include <math.h>
 
@@ -58,3 +61,4 @@ public:
 #endif
 };
 
+#endif
