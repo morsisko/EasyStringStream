@@ -26,9 +26,9 @@ public:
 	const char* get();
 	int getCursor();
 	int getLength();
-	size_t print(const char[]);
-	size_t print(char);
-	size_t print(unsigned char);
+	size_t virtual print(const char[]);
+	size_t virtual print(char);
+	size_t virtual print(unsigned char);
 	size_t print(int, int = -1);
 	size_t print(unsigned int, int = -1);
 	size_t print(long, int = -1);
